@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="userApp">
+
+<head>
+    <!-- Required meta tags -->
+    <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="shortcut icon" href="../images/citiicon.svg" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+
+    <!-- JQuery -->
+    <!-- <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script> -->
+
+    <!-- AngularJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"
+        integrity="sha512-7oYXeK0OxTFxndh0erL8FsjGvrl2VMDor6fVqzlLGfwOQQqTbYsGPv4ZZ15QHfSk80doyaM0ZJdvkyDcVO7KFA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.8.2/angular-sanitize.min.js"
+        integrity="sha512-JkCv2gG5E746DSy2JQlYUJUcw9mT0vyre2KxE2ZuDjNfqG90Bi7GhcHUjLQ2VIAF1QVsY5JMwA1+bjjU5Omabw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-animate/1.8.2/angular-animate.min.js"
+        referrerpolicy="no-referrer"></script>
+    <!-- <script src="../plugins/angular.min.js"></script>
+    <script src="../plugins/angular-sanitize.min.js"></script>
+    <script src="../plugins/angular-animate.min.js"></script> -->
+    <!-- Angular APP Components -->
+
+    <script src="../js/util.js"></script>
+    <script src="../js/userApp.js"></script>
+    <script src="../js/userServices.js"></script>
+    <script src="../js/userController.js"></script>
+
+    <!-- <script src="../lib/js/app/util.js?ver=3.0"></script> -->
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css" />
+
+    <title>GIAM - Home</title>
+</head>
+
+<body ng-controller="userController">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar mb-5">
+        <div class="container">
+
+
+            <a class="navbar-brand waves-effect" href="/" target="_blank">
+                GIAM
+            </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                </ul>
+
+
+                <ul class="navbar-nav nav-flex-icons">
+                    <li class="nav-item">
+                        <a ng-href="{{loggedUser.linkedIn}}" class="nav-link waves-effect" target="_blank">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ng-href="{{loggedUser.git}}" class="nav-link waves-effect" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a ng-href="mailto:{{loggedUser.email}}"
+                            class="nav-link border border-light rounded waves-effect mr-2" target="_blank">
+                            <i class="fas fa-envelope mr-1"></i>Email
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+    </nav>
+
+
+    <main class="mt-2">
+        <section class="container">
+
+            <div class="row mt-5" ng-if="!loading && allUsers.length>0">
+                <div class="col-12 mt-5">
+                    <h4 class="pageTitle text-center">View User Detail(s)</h4>
+                </div>
+                <div class="col-12 mt-5">
+                    <button type="button" class="btn btn-success float-right" ng-click="download();"> <i
+                            class="far fa-file-excel text-white"></i> Download CSV</button>
+
+                </div>
+            </div>
+            <div class="container" ng-if="!loading  && allUsers.length>0">
+                <div class="row mt-2">
+                    <div class="col-sm-12 col-md-6 mb-4" ng-repeat="user in allUsers track by $index" >
+                        <div class="card testimonial-card">
+                            <div class="row">
+                                <div class="col-4 avatar ml-4 mt-4 white">
+                                    <img ng-src={{user.picture}} class="rounded-circle img-responsive mt-3" alt="avatar"
+                                        style="max-width: 75px" />
+
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="mt-2 text-strong">{{user.title | capitalize}} {{user.firstName}}
+                                        {{user.lastName}}
+                                    </h4>
+                                    <hr />
+                                    <div class="row">
+                                        <label>Gender:</label>
+                                        <label>{{user.gender | capitalize}}</label>
+                                    </div>
+                                    <div class="row">
+                                        <label>Date of Birth:</label>
+                                        <label>{{user.dateOfBirth | date : "dd-MMM-y" }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-5">
+
+                                        <label>Phone:</label>
+                                        <label>{{user.phone}}</label>
+                                    </div>
+                                    <div class="col-sm-12 col-md-7">
+                                        <label>Email:</label>
+                                        <label>{{user.email}}</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <label>Address:</label>
+                                    </div>
+                                    <div class="row">
+                                        <label>Street:</label>
+                                        <p lang="es">{{user.translatedLocation.street}}</p>
+                                    </div>
+                                    <div class="row">
+                                        <label>City:</label>
+                                        <label>{{user.translatedLocation.city}}</label>
+                                    </div>
+                                    <div class="row">
+                                        <label>State:</label>
+                                        <label>{{user.translatedLocation.state}}</label>
+                                    </div>
+                                    <div class="row">
+                                        <label>Country:</label>
+                                        <label>{{user.location.country}}</label>
+                                    </div>
+                                    <div class="row">
+                                        <label>TimeZone:</label>
+                                        <label>{{user.location.timezone}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row mt-2" >
+                    <div class="col-sm-12 col-md-4 mb-4">
+                        <span ng-show="loadMoreFlag" class="display-6 text-warning"><i class="fas fa-2x fa-spin fa-spinner text-warning"></i> Loading</span>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mb-4">
+                        <span class="display-6 text-primary">Displaying {{allUsers.length}} of {{userDetails.totalData}} users data.</span>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mb-4" ng-if="(userDetails.totalData != allUsers.length) && (!loadMoreFlag)">
+                        <button type="button" class="btn btn-info float-right" ng-click="loadMore();">Load More</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="row  mt-5">
+                <div class="col-12">
+                    <loading></loading>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+    <!-- <user-footer></user-footer> -->
+    <footer class="page-footer font-small indigo darken-4 py-4 mt-4 fixed-bottom">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-6 d-flex justify-content-start">
+                    <div class="footer-copyright text-center bg-transparent">No © Copyright issues
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex justify-content-end">
+                    <div class="footer-copyright text-right bg-transparent">Made with <i
+                            class="fas fa-heart red-text mx-1"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+</body>
+
+</html>
