@@ -147,6 +147,7 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
         var deferPromise = defer.promise;
         $scope.deferChain.push(deferPromise);
         var userData = angular.copy($scope.userDetails.data);
+        allUsersData = [];
         var chain = $q.when();
         angular.forEach(userData, function (userObj, index) {
             chain = chain.then(function () {
@@ -182,7 +183,7 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                     userObj.translatedLocation.street = translation[0].trim();
                     userObj.translatedLocation.city = translation[1].trim();
                     userObj.translatedLocation.state = translation[2].trim();
-                    userObj.checkFlag = {
+                    userObj.errFlag = {
                         country: false,
                         state: false,
                         city: false,
@@ -191,7 +192,7 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                     // userObj.location.street = translation[0];
                     // userObj.location.city = translation[1];
                     // userObj.location.state = translation[2];
-                    $scope.allUsers.push(userObj);
+                    //$scope.allUsers.push(userObj);
                     if (allUsersData.length == (index + 1)) {
                         defer.resolve("COMPLETE - Got Complete User Details ");
                     }
@@ -214,12 +215,71 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
         return deferPromise;
     };
 
+    $scope.validateData = function (param) {
+        var defer = $q.defer();
+        var deferPromise = defer.promise;
+        // General assumption is that the country is always true
+        var chain = $q.when();
+        angular.forEach(allUsersData, function (userObj, index) {
+            chain = chain.then(function () {
+                return userServices.checkData(userObj, param).then(function (locationResults) {
+                    var val;
+                    // console.log(locationResults);
+                    locationResults['user'] = userObj.firstName + " " + userObj.lastName;
+                    if (locationResults.data.geonames.length > 0) {
+                        var countryVal = locationResults.data.geonames.filter((city) => {
+                            return city.countryName === userObj.location.country;
+                        });
+                        //  console.log(countryVal);
+                        val = countryVal.length == 0 ? locationResults.data.geonames[0] : countryVal[0];
+                        userObj[param] = val;
+                        console.log(val);
+                        if (val.countryName == userObj.location.country)
+                            userObj.errFlag[param] = false;
+                        else {
+                            userObj.errFlag[param] = true;
+                        }
+                    }
+
+                    if (allUsersData.length == (index + 1)) {
+                        defer.resolve("COMPLETE - Got Complete User Details ");
+                    }
+
+                }).catch(function (errResponse) {
+                    $scope.pageError = true;
+                    $scope.pageErrorResponse = errResponse;
+                    defer.reject(errResponse);
+                });
+            });
+        });
+        console.log(allUsersData);
+
+        return deferPromise;
+    };
+
+    $scope.manipulateData = function () {
+        var defer = $q.defer();
+        var deferPromise = defer.promise;
+        // General assumption is that the country is always true
+        var chain = $q.when();
+        angular.forEach(allUsersData, function (userObj, index) {
+            $scope.allUsers.push(userObj);
+        });
+        defer.resolve("COMPLETE");
+        console.log(allUsersData);
+
+        return deferPromise;
+    };
+
     $scope.loadMore = function () {
         $scope.loadMoreFlag = true;
         var chain = $q;
         chain = chain.when($scope.getAllUsers());
         chain = chain.then(function () { return $scope.getAllUserDetails(); });
         chain = chain.then(function () { return $scope.translate(); });
+        chain = chain.then(function () { return $scope.validateData('city'); });
+        chain = chain.then(function () { return $scope.validateData('state'); });
+        chain = chain.then(function () { return $scope.manipulateData() });
         chain = chain.then(function () { return $scope.endLoading(); });
     };
 
@@ -286,6 +346,9 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 chain = chain.then(function () { return $scope.getAllUsers(); });
                 chain = chain.then(function () { return $scope.getAllUserDetails(); });
                 chain = chain.then(function () { return $scope.translate(); });
+                chain = chain.then(function () { return $scope.validateData('city'); });
+                chain = chain.then(function () { return $scope.validateData('state'); });
+                chain = chain.then(function () { return $scope.manipulateData(); });
                 break;
         }
         chain = chain.then(function () { return $scope.logAction('PAGELOAD', ''); });

@@ -118,7 +118,7 @@
             </div>
             <div class="container" ng-if="!loading  && allUsers.length>0">
                 <div class="row mt-2">
-                    <div class="col-sm-12 col-md-6 mb-4" ng-repeat="user in allUsers track by $index" >
+                    <div class="col-sm-12 col-md-6 mb-4" ng-repeat="user in allUsers track by $index">
                         <div class="card testimonial-card">
                             <div class="row">
                                 <div class="col-4 avatar ml-4 mt-4 white">
@@ -159,19 +159,28 @@
                                     </div>
                                     <div class="row">
                                         <label>Street:</label>
-                                        <p lang="es">{{user.translatedLocation.street}}</p>
+                                        <label>{{user.translatedLocation.street}}</label>
                                     </div>
                                     <div class="row">
                                         <label>City:</label>
                                         <label>{{user.translatedLocation.city}}</label>
+                                        
+                                        <span ng-if="user.errFlag.city" class="text-danger" style="font-size: 10px;">City info is
+                                            incorrect</span>
                                     </div>
                                     <div class="row">
                                         <label>State:</label>
                                         <label>{{user.translatedLocation.state}}</label>
+                                       
+                                        <span ng-if="user.errFlag.state" class="text-danger" style="font-size: 10px;">State info is
+                                            incorrect</span>
                                     </div>
                                     <div class="row">
                                         <label>Country:</label>
                                         <label>{{user.location.country}}</label>
+                                        
+                                        <span ng-if="user.errFlag.country" class="text-danger" style="font-size: 10px;">Country info is
+                                            incorrect</span>
                                     </div>
                                     <div class="row">
                                         <label>TimeZone:</label>
@@ -184,14 +193,17 @@
                 </div>
             </div>
             <div class="container">
-                <div class="row mt-2" >
+                <div class="row mt-2">
                     <div class="col-sm-12 col-md-4 mb-4">
-                        <span ng-show="loadMoreFlag" class="display-6 text-warning"><i class="fas fa-2x fa-spin fa-spinner text-warning"></i> Loading</span>
+                        <span ng-show="loadMoreFlag" class="display-6 text-warning"><i
+                                class="fas fa-2x fa-spin fa-spinner text-warning"></i> Loading</span>
                     </div>
                     <div class="col-sm-12 col-md-4 mb-4">
-                        <span class="display-6 text-primary">Displaying {{allUsers.length}} of {{userDetails.totalData}} users data.</span>
+                        <span class="display-6 text-primary">Displaying {{allUsers.length}} of {{userDetails.totalData}}
+                            users data.</span>
                     </div>
-                    <div class="col-sm-12 col-md-4 mb-4" ng-if="(userDetails.totalData != allUsers.length) && (!loadMoreFlag)">
+                    <div class="col-sm-12 col-md-4 mb-4"
+                        ng-if="(userDetails.totalData != allUsers.length) && (!loadMoreFlag)">
                         <button type="button" class="btn btn-info float-right" ng-click="loadMore();">Load More</button>
                     </div>
                 </div>

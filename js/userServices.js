@@ -121,7 +121,6 @@ angModule.factory("userServices", function ($q, $http, $log) {
             method: "GET",
             headers: restEndPoint.header
         }).then(function (result) {
-            console.log(result);
             deferred.resolve(result.data);
         }).catch(function (err) {
             var errorCode = errResponse.error.code;
@@ -135,27 +134,6 @@ angModule.factory("userServices", function ($q, $http, $log) {
     factory.getTransalatedLanguage = function (restEndPoint) {
         var deferred = $q.defer();
         var targetLang = countryMap.get(restEndPoint.country).lang;
-        // $http({
-        //     url: "https://google-translate1.p.rapidapi.com/language/translate/v2",
-        //     method: "POST",           
-        //     headers: {
-        //         "content-type": "application/x-www-form-urlencoded",
-        //         "x-rapidapi-host": "google-translate1.p.rapidapi.com",
-        //         "x-rapidapi-key": "d6b73299cbmsh2a7087e9f3828bdp1cbd25jsnc9bba4fb5737"
-        //     },
-        //     body: {
-        //         "q": restEndPoint.street + ";#;" + restEndPoint.city + ";#;" + restEndPoint.state,
-        //         "target": targetLang,
-        //         "source": "en"
-        //     }
-        // }).then(function (result) {
-        //     console.log(result);
-        //     deferred.resolve(result.data);
-        // }).catch(function (err) {
-        //     var errorCode = errResponse.error.code;
-        //     var errorMsg = errResponse.error.message.value
-        //     deferred.reject("Retry! - [" + errorCode + " - " + errorMsg + "]");
-        // });
         if (targetLang != 'en') {
             var saveData = $.ajax({
                 "async": true,
@@ -168,12 +146,12 @@ angModule.factory("userServices", function ($q, $http, $log) {
                     "x-rapidapi-key": "d6b73299cbmsh2a7087e9f3828bdp1cbd25jsnc9bba4fb5737"
                 },
                 "data": {
-                    "q": restEndPoint.street + '*' + restEndPoint.city + '*' + restEndPoint.state,
+                    "q": restEndPoint.street.replace(',',' ') + '*' + restEndPoint.city + '*' + restEndPoint.state,
                     "target": targetLang,
                     "source": "en"
                 },
                 success: function (resultData) {
-                  //  console.log(resultData);
+                    //  console.log(resultData);
                     deferred.resolve(resultData.data);
 
                 },
@@ -184,37 +162,40 @@ angModule.factory("userServices", function ($q, $http, $log) {
             });
         }
         else {
-            var result = { translations: [{translatedText:restEndPoint.street + '*' + restEndPoint.city + '*' + restEndPoint.state}] };
-          //  console.log(result);
+            var result = { translations: [{ translatedText: restEndPoint.street + '*' + restEndPoint.city + '*' + restEndPoint.state }] };
             deferred.resolve(result);
         }
-
-        // const settings = {
-        //     "async": true,
-        //     "crossDomain": true,
-        //     "url": "https://google-translate1.p.rapidapi.com/language/translate/v2",
-        //     "method": "POST",
-        //     "headers": {
-        //         "content-type": "application/x-www-form-urlencoded",
-        //         "accept-encoding": "application/gzip",
-        //         "x-rapidapi-host": "google-translate1.p.rapidapi.com",
-        //         "x-rapidapi-key": "d6b73299cbmsh2a7087e9f3828bdp1cbd25jsnc9bba4fb5737"
-        //     },
-        //     "data": {
-        //         "q": "Hello, world!",
-        //         "target": "es",
-        //         "source": "en"
-        //     }
-        // };
-
-        // jQuery.ajax(settings).done(function (response) {
-        //     console.log(response);
-        // });
-
         return deferred.promise;
 
     }
 
+    factory.checkData = function (userData, param) {
+        var deferred = $q.defer();
+        var url = "http://api.geonames.org/searchJSON?formatted=true&q="; var searchParam = '';
+        if (param == 'city')
+            searchParam = encodeURIComponent(userData.translatedLocation.city);
+        if (param == 'state')
+            searchParam = encodeURIComponent(userData.translatedLocation.state);
+        url = url + searchParam + "&maxRows=10&username=prabuelumalai20";
+        console.log(url);
+        console.log(userData.location.state+"-"+userData.location.city+"-"+userData.location.country+"-"+userData.location.street);
+        $http({
+            url: url,
+            method: "GET",
+            headers: {
+                "Accept": "application/json;odata=verbose",
+                "Content-Type": "application/json;odata=verbose"
+            }
+        }).then(function (result) {
+            deferred.resolve(result);
+        }).catch(function (err) {
+            var errorCode = errResponse.error.code;
+            var errorMsg = errResponse.error.message.value
+            deferred.reject("Retry! - [" + errorCode + " - " + errorMsg + "]");
+        });
+        return deferred.promise;
+
+    }
     return factory;
 
 
