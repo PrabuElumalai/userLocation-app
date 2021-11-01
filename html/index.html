@@ -3,8 +3,8 @@
 
 <head>
     <!-- Required meta tags -->
-    <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
-    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"> -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link rel="shortcut icon" href="../images/citiicon.svg" type="image/x-icon" />
@@ -22,9 +22,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-animate/1.8.2/angular-animate.min.js"
         referrerpolicy="no-referrer"></script>
-    <!-- <script src="../plugins/angular.min.js"></script>
-    <script src="../plugins/angular-sanitize.min.js"></script>
-    <script src="../plugins/angular-animate.min.js"></script> -->
+  
     <!-- Angular APP Components -->
 
     <script src="../js/util.js"></script>
@@ -166,10 +164,6 @@
                                         <label ng-class="{'text-danger mr-5':user.errFlag.city==true}"
                                             data-mdb-toggle="tooltip"
                                             title="Invalid City">{{user.translatedLocation.city}}</label>
-
-                                        <!-- <span ng-if="user.errFlag.city" class="text-danger"
-                                            style="font-size: 10px;">City info is
-                                            incorrect</span> -->
                                         <select name="city" id="{{user.location.city}}" ng-model="user.udpatedCity"
                                             ng-change="updateUser($index,'city',user.udpatedCity);"
                                             class="float-right" ng-if="user.errFlag.city">
@@ -182,9 +176,7 @@
                                         <label ng-class="{'text-danger mr-5':user.errFlag.state==true}"
                                             data-mdb-toggle="tooltip"
                                             title="Invalid State">{{user.translatedLocation.state}}</label>
-                                        <!-- <button type="button" ng-if="user.errFlag.state"
-                                            class="btn btn-outline-danger float-right" data-mdb-ripple-color="dark"
-                                            ng-click="getData('city',index);">Get City</button> -->
+                                       
                                     </div>
                                     <div class="row">
                                         <label>Country:</label>

@@ -21,19 +21,7 @@ angM.filter('capitalize', function () {
         return (angular.isString(input) && input.length > 0) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : input;
     }
 });
-// angM.directive('userHeader', function () {
-//     return {
-//         restrict: 'E',
-//         replace: true,
-//         template: '<nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar"><div className="container"> <a class="navbar-brand waves-effect" href="index.html" id="brandTitle"><img src="../images/citiLogo.svg" class="d-inline-block align-top w-25" alt="Citi" /><span class="link">GIAM - User App</span></a><button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button><div className="collapse navbar-collapse" id="navbarSupportedContent"> <ul class="navbar-nav nav-flex-icons"><li class="nav-item" ng-click="openPage(\'EMAIL\')"> <i class="fas fa-envelope mr-1"></i></li><li class="nav-item" ng-click="openPage(\'LINKEDIN\')"><i class="fab fa-linkedin mr-1"></i></li><li class="nav-item" ng-click="openPage(\'GIT\')"><i class="fab fa-github"></i> </li></ul></div></div></nav>'
-//     };
-// });
 
-// angM.directive('userFooter', function () {
-//     return {
-//         template: '<footer class="footer fixed-bottom"><div class="text-center text-white"><div class="d-flex justify-content-center my-1"><div class="mr-2 align-self-center"><span>Copyright © {{currentYear}} Ford Motor Company | All rights reserved.</span></div><div class="ml-5 align-self-center"><span>Powered by <span class="btn btn-outline-light btn-xs p-0 px-1" title="Click here to find out more..." data-toggle="modal"><span class="font-weight-bold">GIAM</span><span>Innovation</span></span></span></div></div></div></footer>'
-//     };
-// });
 
 angM.controller('userController', function ($scope, $q, $log, userServices) {//,$filter, $locale,  $window, $timeout, $sce,
 
@@ -164,17 +152,14 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 });
             });
         });
-        // console.log($scope.allUsers);
         return deferPromise;
     };
     $scope.translate = function () {
         var defer = $q.defer();
         var deferPromise = defer.promise;
         $scope.deferChain.push(deferPromise);
-        //var userData = $scope.allUsers;
         var chain = $q.when();
         angular.forEach(allUsersData, function (userObj, index) {
-            // if (userObj.hasOwnProperty("translated") == false) {
             chain = chain.then(function () {
                 return userServices.getTransalatedLanguage(userObj.location).then(function (userResults) {
                     var translatedTxt = userResults.translations[0].translatedText;
@@ -190,10 +175,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                         city: false,
                         street: false
                     }
-                    // userObj.location.street = translation[0];
-                    // userObj.location.city = translation[1];
-                    // userObj.location.state = translation[2];
-                    //$scope.allUsers.push(userObj);
                     if (allUsersData.length == (index + 1)) {
                         defer.resolve("COMPLETE - Got Complete User Details ");
                     }
@@ -203,12 +184,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                     defer.reject(errResponse);
                 });
             });
-            // }
-            // else {
-            //     if (userObj.translated == true) { }
-            //     else userObj['translated'] = false;
-
-            // }
 
         });
 
@@ -224,16 +199,13 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
             chain = chain.then(function () {
                 return userServices.checkData(userObj, param).then(function (locationResults) {
                     var val;
-                    // console.log(locationResults);
                     locationResults['user'] = userObj.firstName + " " + userObj.lastName;
                     if (locationResults.data.geonames.length > 0) {
                         var countryVal = locationResults.data.geonames.filter((city) => {
                             return ((city.countryName === userObj.location.country) && (city.fclName.includes(param)));
                         });
-                      //  console.log(countryVal);
                         val = countryVal.length == 0 ? locationResults.data.geonames[0] : countryVal[0];
                         userObj[param] = val;
-                        //console.log(val);
                         if (val.countryName == userObj.location.country)
                             userObj.errFlag[param] = false;
                         else {
@@ -256,15 +228,12 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 });
             });
         });
-       // console.log(allUsersData);
-
         return deferPromise;
     };
 
     $scope.getCorrectData = function () {
         var defer = $q.defer();
         var deferPromise = defer.promise;
-        // General assumption is that the country is always true
         var chain = $q.when(); var param;
         angular.forEach(allUsersData, function (userObj, index) {
             chain = chain.then(function () {
@@ -274,8 +243,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                     param = 'city';
                 var params = param == 'city' ? 'state' : 'city';
                 userObj[params].correction = [];
-                // userObj['state'].correction = [];
-             //   console.log(userObj);
                 if (userObj.errFlag.city || userObj.errFlag.state) {
                     return userServices.checkData(userObj, param).then(function (locationResults) {
                         var val;
@@ -283,7 +250,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                             var countryVal = locationResults.data.geonames.filter((city) => {
                                 return ((city.countryName === userObj.location.country) && (city.fclName.includes(params)));
                             });
-                        //    console.log(countryVal);
                             if (countryVal.length > 0) {
 
                                 userObj[params].correction = countryVal;
@@ -308,24 +274,9 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 }
             });
         });
-     //   console.log(allUsersData);
-
         return deferPromise;
     };
 
-    $scope.manipulateData = function () {
-        var defer = $q.defer();
-        var deferPromise = defer.promise;
-        // General assumption is that the country is always true
-        var chain = $q.when();
-        angular.forEach(allUsersData, function (userObj, index) {
-            //   $scope.allUsers.push(userObj);
-        });
-        defer.resolve("COMPLETE");
-       // console.log(allUsersData);
-
-        return deferPromise;
-    };
 
     $scope.updateUser = function (index, param, val) {
 
@@ -343,7 +294,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
         chain = chain.then(function () { return $scope.validateData('city'); });
         chain = chain.then(function () { return $scope.validateData('state'); });
         chain = chain.then(function () { return $scope.getCorrectData(); });
-        //  chain = chain.then(function () { return $scope.manipulateData() });
         chain = chain.then(function () { return $scope.endLoading(); });
     };
 
@@ -358,7 +308,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
             dateOfBirth: "Date of Birth",
             gender: "Gender",
             email: "Email",
-            // location: "Location".replace(/,/g, ''),
             city: "City".replace(/,/g, ''),
             country: "Country".replace(/,/g, ''),
             state: "State".replace(/,/g, ''),
@@ -379,7 +328,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 dateOfBirth: new Date(item.dateOfBirth).toDateString(),
                 gender: item.gender,
                 email: item.email,
-                // location: item.location.replace(/,/g, ''),
                 city: item.translatedLocation.city.replace(/,/g, ''),
                 country: item.location.country.replace(/,/g, ''),
                 state: item.translatedLocation.state.replace(/,/g, ''),
@@ -413,13 +361,11 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 chain = chain.then(function () { return $scope.validateData('city'); });
                 chain = chain.then(function () { return $scope.validateData('state'); });
                 chain = chain.then(function () { return $scope.getCorrectData(); });
-                // chain = chain.then(function () { return $scope.manipulateData(); });
                 break;
         }
         chain = chain.then(function () { return $scope.logAction('PAGELOAD', ''); });
         chain = chain.then(function () { return $scope.endLoading(); });
-        //console.log($scope.loggedUser);
-        //$scope.logAction('PAGELOAD');
+
     }
 
     function cleanUpLoading() {
@@ -432,7 +378,7 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
             $scope.pageError = false;
             $scope.pageErrorResponse = [];
         }
-        
+
     }
 
     function convertToCSV(objArray) {
@@ -470,8 +416,7 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
             navigator.msSaveBlob(blob, exportedFilenmae);
         } else {
             var link = document.createElement("a");
-            if (link.download !== undefined) { // feature detection
-                // Browsers that support HTML5 download attribute
+            if (link.download !== undefined) {
                 var url = URL.createObjectURL(blob);
                 link.setAttribute("href", url);
                 link.setAttribute("download", exportedFilenmae);
