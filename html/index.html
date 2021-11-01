@@ -163,7 +163,7 @@
                                     </div>
                                     <div class="row">
                                         <label>City:</label>
-                                        <label ng-class="{'btn btn-outline-danger':user.errFlag.city==true}"
+                                        <label ng-class="{'text-danger mr-5':user.errFlag.city==true}"
                                             data-mdb-toggle="tooltip"
                                             title="Invalid City">{{user.translatedLocation.city}}</label>
 
@@ -179,7 +179,7 @@
                                     </div>
                                     <div class="row">
                                         <label>State:</label>
-                                        <label ng-class="{'btn btn-outline-danger':user.errFlag.state==true}"
+                                        <label ng-class="{'text-danger mr-5':user.errFlag.state==true}"
                                             data-mdb-toggle="tooltip"
                                             title="Invalid State">{{user.translatedLocation.state}}</label>
                                         <!-- <button type="button" ng-if="user.errFlag.state"
@@ -188,7 +188,7 @@
                                     </div>
                                     <div class="row">
                                         <label>Country:</label>
-                                        <label ng-class="{'btn btn-outline-danger':user.errFlag.country==true}"
+                                        <label ng-class="{'btn text-danger mr-5':user.errFlag.country==true}"
                                             data-mdb-toggle="tooltip"
                                             title="Invalid Country">{{user.translatedLocation.country}}</label>
                                     </div>
@@ -235,7 +235,7 @@
 
             <div class="row">
                 <div class="col-md-6 d-flex justify-content-start">
-                    <div class="footer-copyright text-center bg-transparent">No © Copyright issues
+                    <div class="footer-copyright text-center bg-transparent">No <i class="far fa-copyright"></i> Copyright issues
                     </div>
                 </div>
                 <div class="col-md-6 d-flex justify-content-end">
