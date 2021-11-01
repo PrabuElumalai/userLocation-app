@@ -432,6 +432,7 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
             $scope.pageError = false;
             $scope.pageErrorResponse = [];
         }
+        
     }
 
     function convertToCSV(objArray) {

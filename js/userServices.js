@@ -175,7 +175,7 @@ angModule.factory("userServices", function ($q, $http, $log) {
             searchParam = encodeURIComponent(userData.translatedLocation.city);
         if (param == 'state')
             searchParam = encodeURIComponent(userData.translatedLocation.state);
-        url = url + searchParam + "&maxRows=1000&username=prabuelumalai20";
+        url = url + searchParam + "&maxRows=100&username=prabuelumalai20";
         $http({
             url: url,
             method: "GET",
