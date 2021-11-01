@@ -55,6 +55,7 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
     $scope.currentYear = new Date().getFullYear();
     $scope.logData = true;
     $scope.allUsers = [];
+    $scope.reportUsers = [];
     $scope.userDetails = {
         data: [],
         totalData: 0,
@@ -210,7 +211,6 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
             // }
 
         });
-        console.log($scope.allUsers);
 
         return deferPromise;
     };
@@ -228,17 +228,21 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                     locationResults['user'] = userObj.firstName + " " + userObj.lastName;
                     if (locationResults.data.geonames.length > 0) {
                         var countryVal = locationResults.data.geonames.filter((city) => {
-                            return city.countryName === userObj.location.country;
+                            return ((city.countryName === userObj.location.country) && (city.fclName.includes(param)));
                         });
-                        //  console.log(countryVal);
+                      //  console.log(countryVal);
                         val = countryVal.length == 0 ? locationResults.data.geonames[0] : countryVal[0];
                         userObj[param] = val;
-                        console.log(val);
+                        //console.log(val);
                         if (val.countryName == userObj.location.country)
                             userObj.errFlag[param] = false;
                         else {
                             userObj.errFlag[param] = true;
                         }
+                    }
+                    else {
+                        userObj.errFlag[param] = false;
+                        userObj[param] = { name: userObj.translatedLocation[param] };
                     }
 
                     if (allUsersData.length == (index + 1)) {
@@ -252,7 +256,59 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 });
             });
         });
-        console.log(allUsersData);
+       // console.log(allUsersData);
+
+        return deferPromise;
+    };
+
+    $scope.getCorrectData = function () {
+        var defer = $q.defer();
+        var deferPromise = defer.promise;
+        // General assumption is that the country is always true
+        var chain = $q.when(); var param;
+        angular.forEach(allUsersData, function (userObj, index) {
+            chain = chain.then(function () {
+                if (userObj.errFlag.city)
+                    param = 'state';
+                if (userObj.errFlag.state)
+                    param = 'city';
+                var params = param == 'city' ? 'state' : 'city';
+                userObj[params].correction = [];
+                // userObj['state'].correction = [];
+             //   console.log(userObj);
+                if (userObj.errFlag.city || userObj.errFlag.state) {
+                    return userServices.checkData(userObj, param).then(function (locationResults) {
+                        var val;
+                        if (locationResults.data.geonames.length > 0) {
+                            var countryVal = locationResults.data.geonames.filter((city) => {
+                                return ((city.countryName === userObj.location.country) && (city.fclName.includes(params)));
+                            });
+                        //    console.log(countryVal);
+                            if (countryVal.length > 0) {
+
+                                userObj[params].correction = countryVal;
+                            }
+                            $scope.allUsers.push(userObj);
+                        }
+                        else {
+                            $scope.allUsers.push(userObj);
+                        }
+
+                    }).catch(function (errResponse) {
+                        $scope.pageError = true;
+                        $scope.pageErrorResponse = errResponse;
+                        defer.reject(errResponse);
+                    });
+                }
+                else {
+                    $scope.allUsers.push(userObj);
+                }
+                if (allUsersData.length == (index + 1)) {
+                    defer.resolve("COMPLETE - Got Complete User Details ");
+                }
+            });
+        });
+     //   console.log(allUsersData);
 
         return deferPromise;
     };
@@ -263,13 +319,20 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
         // General assumption is that the country is always true
         var chain = $q.when();
         angular.forEach(allUsersData, function (userObj, index) {
-            $scope.allUsers.push(userObj);
+            //   $scope.allUsers.push(userObj);
         });
         defer.resolve("COMPLETE");
-        console.log(allUsersData);
+       // console.log(allUsersData);
 
         return deferPromise;
     };
+
+    $scope.updateUser = function (index, param, val) {
+
+        $scope.allUsers[index].location[param] = val;
+        $scope.allUsers[index].translatedLocation[param] = val;
+        $scope.allUsers[index].errFlag[param] = false;
+    }
 
     $scope.loadMore = function () {
         $scope.loadMoreFlag = true;
@@ -279,7 +342,8 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
         chain = chain.then(function () { return $scope.translate(); });
         chain = chain.then(function () { return $scope.validateData('city'); });
         chain = chain.then(function () { return $scope.validateData('state'); });
-        chain = chain.then(function () { return $scope.manipulateData() });
+        chain = chain.then(function () { return $scope.getCorrectData(); });
+        //  chain = chain.then(function () { return $scope.manipulateData() });
         chain = chain.then(function () { return $scope.endLoading(); });
     };
 
@@ -316,10 +380,10 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 gender: item.gender,
                 email: item.email,
                 // location: item.location.replace(/,/g, ''),
-                city: item.transalatedLocation.city.replace(/,/g, ''),
+                city: item.translatedLocation.city.replace(/,/g, ''),
                 country: item.location.country.replace(/,/g, ''),
-                state: item.transalatedLocation.state.replace(/,/g, ''),
-                street: item.transalatedLocation.street.replace(/,/g, ''),
+                state: item.translatedLocation.state.replace(/,/g, ''),
+                street: item.translatedLocation.street.replace(/,/g, ''),
                 timezone: item.location.timezone,
                 phone: item.phone,
                 picture: item.picture,
@@ -348,7 +412,8 @@ angM.controller('userController', function ($scope, $q, $log, userServices) {//,
                 chain = chain.then(function () { return $scope.translate(); });
                 chain = chain.then(function () { return $scope.validateData('city'); });
                 chain = chain.then(function () { return $scope.validateData('state'); });
-                chain = chain.then(function () { return $scope.manipulateData(); });
+                chain = chain.then(function () { return $scope.getCorrectData(); });
+                // chain = chain.then(function () { return $scope.manipulateData(); });
                 break;
         }
         chain = chain.then(function () { return $scope.logAction('PAGELOAD', ''); });

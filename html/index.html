@@ -163,24 +163,34 @@
                                     </div>
                                     <div class="row">
                                         <label>City:</label>
-                                        <label>{{user.translatedLocation.city}}</label>
-                                        
-                                        <span ng-if="user.errFlag.city" class="text-danger" style="font-size: 10px;">City info is
-                                            incorrect</span>
+                                        <label ng-class="{'btn btn-outline-danger':user.errFlag.city==true}"
+                                            data-mdb-toggle="tooltip"
+                                            title="Invalid City">{{user.translatedLocation.city}}</label>
+
+                                        <!-- <span ng-if="user.errFlag.city" class="text-danger"
+                                            style="font-size: 10px;">City info is
+                                            incorrect</span> -->
+                                        <select name="city" id="{{user.location.city}}" ng-model="user.udpatedCity"
+                                            ng-change="updateUser($index,'city',user.udpatedCity);"
+                                            class="float-right" ng-if="user.errFlag.city">
+                                            <option value="">Please Select a new city</option>
+                                            <option ng-repeat="x in user.city.correction">{{x.name}}</option>
+                                        </select>
                                     </div>
                                     <div class="row">
                                         <label>State:</label>
-                                        <label>{{user.translatedLocation.state}}</label>
-                                       
-                                        <span ng-if="user.errFlag.state" class="text-danger" style="font-size: 10px;">State info is
-                                            incorrect</span>
+                                        <label ng-class="{'btn btn-outline-danger':user.errFlag.state==true}"
+                                            data-mdb-toggle="tooltip"
+                                            title="Invalid State">{{user.translatedLocation.state}}</label>
+                                        <!-- <button type="button" ng-if="user.errFlag.state"
+                                            class="btn btn-outline-danger float-right" data-mdb-ripple-color="dark"
+                                            ng-click="getData('city',index);">Get City</button> -->
                                     </div>
                                     <div class="row">
                                         <label>Country:</label>
-                                        <label>{{user.location.country}}</label>
-                                        
-                                        <span ng-if="user.errFlag.country" class="text-danger" style="font-size: 10px;">Country info is
-                                            incorrect</span>
+                                        <label ng-class="{'btn btn-outline-danger':user.errFlag.country==true}"
+                                            data-mdb-toggle="tooltip"
+                                            title="Invalid Country">{{user.translatedLocation.country}}</label>
                                     </div>
                                     <div class="row">
                                         <label>TimeZone:</label>

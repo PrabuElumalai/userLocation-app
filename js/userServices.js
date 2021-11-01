@@ -151,7 +151,6 @@ angModule.factory("userServices", function ($q, $http, $log) {
                     "source": "en"
                 },
                 success: function (resultData) {
-                    //  console.log(resultData);
                     deferred.resolve(resultData.data);
 
                 },
@@ -176,9 +175,7 @@ angModule.factory("userServices", function ($q, $http, $log) {
             searchParam = encodeURIComponent(userData.translatedLocation.city);
         if (param == 'state')
             searchParam = encodeURIComponent(userData.translatedLocation.state);
-        url = url + searchParam + "&maxRows=10&username=prabuelumalai20";
-        console.log(url);
-        console.log(userData.location.state+"-"+userData.location.city+"-"+userData.location.country+"-"+userData.location.street);
+        url = url + searchParam + "&maxRows=1000&username=prabuelumalai20";
         $http({
             url: url,
             method: "GET",
